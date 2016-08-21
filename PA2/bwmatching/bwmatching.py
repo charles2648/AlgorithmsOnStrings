@@ -3,32 +3,31 @@ import sys
 
 
 def PreprocessBWT(bwt):
-  """
-  Preprocess the Burrows-Wheeler Transform bwt of some text
-  and compute as a result:
-    * starts - for each character C in bwt, starts[C] is the first position
-        of this character in the sorted array of
-        all characters of the text.
-    * occ_count_before - for each character C in bwt and each position P in bwt,
-        occ_count_before[C][P] is the number of occurrences of character C in bwt
-        from position 0 to position P inclusive.
-  """
-  # Implement this function yourself
-  pass
+
+    bwt = list(bwt)
+    starts = countSort(bwt)
+
+    numb = [0] * 5
+    pointer = [numb.copy()]
+    for i in range(len(bwt)):
+        x = select(bwt[i])
+        numb[x] += 1
+        pointer.append(numb.copy())
+    return starts, pointer
 
 
-def CountOccurrences(pattern, bwt, starts, occ_counts_before):
-    """
-    Compute the number of occurrences of string pattern in the text
-    given only Burrows-Wheeler Transform bwt of the text and additional
-    information we get from the preprocessing stage - starts and occ_counts_before.
-    """
-    order = [0,0,0,0,0]
-    for i in range(len(sorted)):
-        x = select(sorted[i])
-        if order[x] == 0:
-            order[x] = i
-    # Implement this function yourself
+def CountOccurrences(pattern, bwt, starts, occ):
+    top = 0
+    bottom = len(bwt) - 1
+    while top <= bottom:
+        if pattern != '':
+            s = pattern[-1]
+            x = select(s)
+            pattern = pattern[:-1]
+            top = starts[x] + occ[top][x]
+            bottom = starts[x] + occ[bottom + 1][x] - 1
+        else:
+            return bottom - top + 1
     return 0
 
 
@@ -37,6 +36,14 @@ def select(inp):
     return a.index(inp)
 
 
+def countSort(inp):
+    out = [0] * 5
+    for i in inp:
+        out[select(i)] += 1
+    out = [0] + out[:4]
+    for i in range(1,5):
+        out[i] += out[i-1]
+    return out
 
 if __name__ == '__main__':
     bwt = sys.stdin.readline().strip()
@@ -49,5 +56,5 @@ if __name__ == '__main__':
     starts, occ_counts_before = PreprocessBWT(bwt)
     occurrence_counts = []
     for pattern in patterns:
-    occurrence_counts.append(CountOccurrences(pattern, bwt, starts, occ_counts_before))
+        occurrence_counts.append(CountOccurrences(pattern, bwt, starts, occ_counts_before))
     print(' '.join(map(str, occurrence_counts)))
